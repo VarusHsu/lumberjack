@@ -113,6 +113,9 @@ type Logger struct {
 
 	millCh    chan bool
 	startMill sync.Once
+	// Hook is when older file write full, then Open a new file and callback
+	// with older file as param. By this callback, We can save logs file.
+	Hook func(olderFile string)
 }
 
 var (
@@ -227,8 +230,10 @@ func (l *Logger) openNew() error {
 		if err := chown(name, info); err != nil {
 			return err
 		}
+		if l.Hook != nil {
+			go l.Hook(newname)
+		}
 	}
-
 	// we use truncate here because this should only get called when we've moved
 	// the file ourselves. if someone else creates the file in the meantime,
 	// just wipe out the contents.

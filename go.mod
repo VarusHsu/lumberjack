@@ -1,3 +1,3 @@
-module gopkg.in/VarusHsu/lumberjack
+module github.com/VarusHsu/lumberjack
 
 go 1.13
